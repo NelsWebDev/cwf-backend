@@ -25,6 +25,7 @@ express.use(static_(publicDir));
 ioServer.use(socketManager.middleware);
 
 ioServer.on("connection", (socket) => {
+  console.log("A user connected");
   socketManager.onSocketConnection(socket);
 });
 prismaClient.$connect().then(() => {
