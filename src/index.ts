@@ -1,7 +1,9 @@
-import { config as loadEnv } from "dotenv";
-import { express, httpServer, ioServer, prismaClient, socketManager } from "./singletons";
-import ApiRouter from "./api/routes";
 import cors from "cors";
+import { config as loadEnv } from "dotenv";
+import { static as static_ } from "express";
+import path from "path";
+import ApiRouter from "./api/routes";
+import { express, httpServer, ioServer, prismaClient, socketManager } from "./singletons";
 loadEnv();
 const HTTP_PORT = process.env.PORT || 3000;
 httpServer.listen(HTTP_PORT, () => {
@@ -15,7 +17,10 @@ express.use(
     origin: "*",
   }),
 );
-express.use("/", ApiRouter);
+express.use("/api", ApiRouter);
+
+const publicDir = path.join(__dirname, "..", "public");
+express.use(static_(publicDir));
 
 ioServer.use(socketManager.middleware);
 
