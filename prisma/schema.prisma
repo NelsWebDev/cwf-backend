@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  username  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model BlackCard {
+  id        String   @id @default(cuid())
+  text      String
+  pick      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deckId    String
+  deck      Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  @@map("cards_blacks")
+}
+
+model WhiteCard {
+  id        String   @id @default(cuid())
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deckId    String
+  deck      Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  @@map("cards_whites")
+}
+
+model Deck {
+  id             String  @id @default(cuid())
+  name           String
+  description    String?
+  importedDeckId String?
+
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  blackCards BlackCard[]
+  whiteCards WhiteCard[]
+
+  @@map("cards_decks")
+}
